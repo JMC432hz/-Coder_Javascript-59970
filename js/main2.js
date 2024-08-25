@@ -12,6 +12,7 @@ function ingresarCantidad(mensaje) {
         cantidad = parseInt(prompt(mensaje), 10);
         if (!esValido(cantidad)) {
             console.log("Cantidad ingresada incorrecta. La UMC (Unidad de medida comercial) es de 5 lts.");
+            alert ("Cantidad ingresada incorrecta. La UMC (Unidad de medida comercial) es de 5 lts.");
         }
     } while (!esValido(cantidad));
     return cantidad;
@@ -30,10 +31,13 @@ do {
         let cantidadAdicional = ingresarCantidad("Ingrese cantidad adicional (en litros):");
         suma += cantidadAdicional;
         console.log("La cantidad total es de " + suma + " lts.");
+        alert ("Van sumados " + suma + " lts. en su pedido");
     } else if (deseaSumar !== "no") {
         console.log("Respuesta no reconocida. Por favor, ingrese 'si' o 'no'.");
+        alert ("Respuesta no reconocida. Por favor, ingrese 'si' o 'no'.");
     }
 } while (deseaSumar !== "no");
 
 // Mostrar el total final
 console.log("La cantidad final es de " + suma + " lts.");
+alert ("La cantidad final es de " + suma + " lts.")
