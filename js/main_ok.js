@@ -1,3 +1,5 @@
+//ARRAY DE OBJETOS
+
 let nominaProductos = [
     {
       categoria: "Papeles Higienicos y Toallas",
@@ -92,6 +94,7 @@ let nominaProductos = [
         indiceSeleccionado < nominaProductos.length
       ) {
         let productoSeleccionado = nominaProductos[indiceSeleccionado];
+        console.log(`Ha seleccionado: ${productoSeleccionado.descripcion}`);
         alert(`Ha seleccionado: ${productoSeleccionado.descripcion}`);
         return productoSeleccionado;
       } else {
@@ -114,6 +117,7 @@ let nominaProductos = [
       if (cantidad === null) return cancelarOperacion();
       cantidad = parseInt(cantidad, 10);
       if (!esValido(cantidad, umc)) {
+        console.log (`Cantidad incorrecta. La UMC es de ${umc}.`);
         alert(`Cantidad incorrecta. La UMC es de ${umc}.`);
       }
     } while (!esValido(cantidad, umc));
@@ -139,6 +143,7 @@ let nominaProductos = [
     if (cantidad === null) break;
     suma += cantidad;
   
+    console.log (`La cantidad inicial de ${productoSeleccionado.descripcion} es de ${suma}.`);
     alert(`La cantidad inicial de ${productoSeleccionado.descripcion} es de ${suma}.`);
   
     // Bucle para sumar más cantidades si el usuario lo desea
@@ -164,6 +169,9 @@ let nominaProductos = [
           break;
         }
         suma += cantidadAdicional;
+        console.log(
+            `Van sumados ${suma} en su pedido de ${productoSeleccionado.descripcion}`
+          );
         alert(
           `Van sumados ${suma} en su pedido de ${productoSeleccionado.descripcion}`
         );
@@ -220,6 +228,7 @@ let nominaProductos = [
     });
     mensajeFinal += `\nPrecio final del pedido: $${precioFinal.toFixed(2)}`;
   
+    console.log (mensajeFinal);
     alert(mensajeFinal);
   } else {
     alert("No se realizó ningún pedido.");
