@@ -1237,4 +1237,158 @@
 // console.log(todosLosProductos);
 
 
+/***************************************************************************** */
+/**********************           DOM             ******************************/
+/***************************************************************************** */
+
+
+//! Metodos de accesos a elementos que Carpi no usa
+// let nominaProductos = document.getElementById("nominaproductos");
+// console.log(nominaProductos);
+ 
+//let nominaProductos = document.getElementsByClassName("producto");
+// console.log(nominaProductos);
+
+
+// let nominaProductos = document.getElementsByClassName("producto");
+// for (let producto of nominaProductos) {
+//     console.log(producto)
+// }
+
+// let nominaProductos = document.getElementsByTagName("li");
+// console.log(nominaProductos);
+
+//!Metodos de acceso a elementos (un poco mas modernos)
+
+// let nominaProductos = document.querySelector(".producto");
+// console.log(nominaProductos);
+
+// let nominaProductos = document.querySelectorAll (".producto");
+// console.log(nominaProductos);
+
+//? innerText : Representa al contenido textual, contenido interno de texto de ese elemento
+
+
+// let nominaProductos = document.querySelector(".producto");
+// console.log(nominaProductos.innerText);
+
+// let nominaProductos = document.querySelector(".producto");
+
+// let producto = prompt("Seleccione un producto");
+// nominaProductos.innerText = "Seleccionaste " + producto;
+
+//? innerHtml : Acepta etiquetas HTML (Ej.: <em> </em> para letra cursiva)
+
+// let producto = prompt("Seleccione un producto");
+// nominaProductos.innerHTML = "Seleccionaste, <em> " + producto + "</em>";
+
+//? Agregar o quitar nodos
+
+
+
+// let producto = document.createElement("li");
+// nominaproductos.innerText= "Seleccione su producto";
+
+// document.body.append(producto);
+
+// let seccion= document.querySelector("#seccion");
+
+// let producto = document.createElement("li");
+// nominaproductos.innerText= "Seleccione su producto";
+
+// seccion.append(producto);
+
+
+// let seccion = document.querySelector("#seccion");
+
+// let productos= [
+//     {
+//       categoria: "Papeles Higienicos y Toallas",
+//       codigo: "00001",
+//       descripcion: "Papel Higienico",
+//       presentacion: "Pack",
+//       umc: 40,
+//       precioPorUmc: 20000,
+//       precioUnitario: 20000 / 40,
+//     },
+//     {
+//       categoria: "Jabones Líquidos",
+//       codigo: "00002",
+//       descripcion: "Jabón líquido",
+//       presentacion: "Bidón",
+//       umc: 5,
+//       precioPorUmc: 5000,
+//       precioUnitario: 5000 / 5,
+//     },
+//     {
+//       categoria: "Bolsas",
+//       codigo: "00003",
+//       descripcion: "Bolsa",
+//       presentacion: "Pack",
+//       umc: 250,
+//       precioPorUmc: 12500,
+//       precioUnitario: 12500 / 250,
+//     },
+// ];
+
+// let lista= document.createElement("ul");
+// lista.innerHTML= `
+// <li>${productos[0]}</li>
+// <li>${productos[1]}</li>
+// <li>${productos[2]}</li>
+// `;
+
+// seccion.append(lista);
+
+let seccion = document.querySelector("#seccion");
+
+let productos= [
+    {
+      categoria: "Papeles Higienicos y Toallas",
+      codigo: "00001",
+      descripcion: "Papel Higienico",
+      presentacion: "Pack",
+      umc: 40,
+      precioPorUmc: 20000,
+      precioUnitario: 20000 / 40,
+    },
+    {
+      categoria: "Jabones Líquidos",
+      codigo: "00002",
+      descripcion: "Jabón líquido",
+      presentacion: "Bidón",
+      umc: 5,
+      precioPorUmc: 5000,
+      precioUnitario: 5000 / 5,
+    },
+    {
+      categoria: "Bolsas",
+      codigo: "00003",
+      descripcion: "Bolsa",
+      presentacion: "Pack",
+      umc: 250,
+      precioPorUmc: 12500,
+      precioUnitario: 12500 / 250,
+    },
+];
+
+let lista= document.createElement("ul");
+productos.forEach((producto) => {
+    let item= document.createElement("li");
+    item.innerText=producto.descripcion + " " + producto.presentacion + " de " + producto.umc + " " + " $" + producto.precioPorUmc;
+    lista.append(item);
+
+
+} )
+
+seccion.append(lista);
+
+/******************************************************* */
+/**************       EVENTOS                *********** */
+/******************************************************** */
+
+//? addEventListener ( evento ,funcion )
+
+
+
 
