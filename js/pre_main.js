@@ -1799,10 +1799,10 @@ function modificarProducto(productoSeleccionado, cantidad) {
     pedidoExistente.cantidad += cantidad;
     if (pedidoExistente.cantidad <= 0) {
       resumenPedidos = resumenPedidos.filter(pedido => pedido.producto !== productoSeleccionado.descripcion);
-      localStorage.removeItem(`carrito-${productoSeleccionado.codigo}`);
+      localStorage.removeItem(`carrito${productoSeleccionado.codigo}`);
     } else {
       pedidoExistente.totalPrecio = (pedidoExistente.cantidad / productoSeleccionado.umc) * productoSeleccionado.precioPorUmc;
-      localStorage.setItem(`carrito-${productoSeleccionado.codigo}`, JSON.stringify(pedidoExistente));
+      localStorage.setItem(`carrito${productoSeleccionado.codigo}`, JSON.stringify(pedidoExistente));
     }
   } else if (cantidad > 0) {
     const nuevoPedido = {
@@ -1812,7 +1812,7 @@ function modificarProducto(productoSeleccionado, cantidad) {
       totalPrecio: (cantidad / productoSeleccionado.umc) * productoSeleccionado.precioPorUmc,
     };
     resumenPedidos.push(nuevoPedido);
-    localStorage.setItem(`carrito-${productoSeleccionado.codigo}`, JSON.stringify(nuevoPedido));
+    localStorage.setItem(`carrito${productoSeleccionado.codigo}`, JSON.stringify(nuevoPedido));
   }
 
   mostrarResumenPedidos();
@@ -1820,7 +1820,7 @@ function modificarProducto(productoSeleccionado, cantidad) {
 
 function cargarCarrito() {
   resumenPedidos = [];
-  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito-'));
+  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito'));
 
   keys.forEach(key => {
     const pedido = JSON.parse(localStorage.getItem(key));
@@ -1849,7 +1849,7 @@ function mostrarResumenPedidos() {
 
 function vaciarCarrito() {
   resumenPedidos = [];
-  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito-'));
+  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito'));
 
   keys.forEach(key => {
     localStorage.removeItem(key);
