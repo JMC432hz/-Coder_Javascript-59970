@@ -84,7 +84,7 @@ function mostrarCategorias() {
     selectCategoria.append(option);
   });
 
-  selectCategoria.onchange = mostrarProductosFiltrados;
+  selectCategoria.addEventListener('change', mostrarProductosFiltrados);
 }
 
 function mostrarProductosFiltrados() {
@@ -111,12 +111,12 @@ function mostrarProductos(productos) {
     const btnAgregar = document.createElement('button');
     btnAgregar.textContent = 'Agregar';
     btnAgregar.classList.add('agregar');
-    btnAgregar.onclick = () => modificarProducto(producto, producto.umc);
+    btnAgregar.addEventListener('click', () => modificarProducto(producto, producto.umc));
 
     const btnQuitar = document.createElement('button');
     btnQuitar.textContent = 'Quitar';
     btnQuitar.classList.add('quitar');
-    btnQuitar.onclick = () => modificarProducto(producto, -producto.umc);
+    btnQuitar.addEventListener('click', () => modificarProducto(producto, -producto.umc));
 
     contenedorBotones.append(btnAgregar);
     contenedorBotones.append(btnQuitar);
@@ -199,5 +199,5 @@ mostrarCategorias();
 mostrarProductos(nominaProductos);
 cargarCarrito();
 
-document.getElementById('vaciarCarrito').onclick = vaciarCarrito;
+document.getElementById('vaciarCarrito').addEventListener('click',vaciarCarrito)
   
