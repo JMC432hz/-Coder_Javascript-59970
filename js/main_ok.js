@@ -1,3 +1,5 @@
+let DateTime = luxon.DateTime;
+
 let nominaProductos = [
   {
     categoria: "Papeles Higienicos y Toallas",
@@ -64,7 +66,6 @@ let nominaProductos = [
   },
 ];
 
-// Lista para almacenar los pedidos
 let resumenPedidos = [];
 
 // Mostrar categorías en el select
@@ -97,14 +98,14 @@ function mostrarProductosFiltrados() {
 
 function mostrarProductos(productos) {
   const contenedor = document.getElementById('nominadeproductos');
-  contenedor.innerHTML = ''; // Eliminamos cualquier contenido anterior
+  contenedor.innerHTML = ''; // Limpiamos el contenido anterior
   const lista = document.createElement('ul'); // Creamos la lista
 
   productos.forEach(producto => {
     const item = document.createElement('li');
     const contenido = ` ${producto.codigo} ${producto.descripcion} ${producto.presentacion} de ${producto.umc} Precio: $${producto.precioPorUmc.toFixed(2)}`;
     item.textContent = contenido;
-    
+
     const contenedorBotones = document.createElement('div');
     contenedorBotones.classList.add('botonera');
 
@@ -136,10 +137,8 @@ function modificarProducto(productoSeleccionado, cantidad) {
     pedidoExistente.cantidad += cantidad;
     if (pedidoExistente.cantidad <= 0) {
       resumenPedidos = resumenPedidos.filter(pedido => pedido.producto !== productoSeleccionado.descripcion);
-      localStorage.removeItem(`carrito${productoSeleccionado.codigo}`);
     } else {
       pedidoExistente.totalPrecio = (pedidoExistente.cantidad / productoSeleccionado.umc) * productoSeleccionado.precioPorUmc;
-      localStorage.setItem(`carrito${productoSeleccionado.codigo}`, JSON.stringify(pedidoExistente));
     }
   } else if (cantidad > 0) {
     const nuevoPedido = {
@@ -149,21 +148,17 @@ function modificarProducto(productoSeleccionado, cantidad) {
       totalPrecio: (cantidad / productoSeleccionado.umc) * productoSeleccionado.precioPorUmc,
     };
     resumenPedidos.push(nuevoPedido);
-    localStorage.setItem(`carrito${productoSeleccionado.codigo}`, JSON.stringify(nuevoPedido));
   }
 
+  // Guardar en localStorage bajo la clave "carrito"
+  localStorage.setItem('carrito', JSON.stringify(resumenPedidos));
   mostrarResumenPedidos();
 }
 
 function cargarCarrito() {
-  resumenPedidos = [];
-  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito'));
-
-  keys.forEach(key => {
-    const pedido = JSON.parse(localStorage.getItem(key));
-    resumenPedidos.push(pedido);
-  });
-
+  // Recuperar el carrito desde localStorage
+  const carritoGuardado = localStorage.getItem('carrito');
+  resumenPedidos = carritoGuardado ? JSON.parse(carritoGuardado) : [];
   mostrarResumenPedidos();
 }
 
@@ -180,23 +175,80 @@ function mostrarResumenPedidos() {
   });
 
   const precioFinalElem = document.createElement('p');
-  precioFinalElem.textContent = `Va sumado en su pedido: $${precioFinal.toFixed(2)}`;
+  precioFinalElem.textContent = `Total en su pedido: $${precioFinal.toFixed(2)}`;
   resumenContenedor.append(precioFinalElem);
 }
 
-function vaciarCarrito() {
-  resumenPedidos = [];
-  const keys = Object.keys(localStorage).filter(key => key.startsWith('carrito'));
+let sweetAlertButtonCompra = document.querySelector('#confirmarPedido');
+sweetAlertButtonCompra.addEventListener('click', () => {
+  if (resumenPedidos.length === 0) {
+    // Mostrar alerta si no hay productos seleccionados
+    Swal.fire({
+      title: "No hay productos seleccionados",
+      text: "Por favor, agregue productos al carrito antes de confirmar el pedido.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+  } else {
+    Swal.fire({
+      title: "¿Desea confirmar su compra?",
+      icon: "warning",
+      iconColor: "red",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dt = DateTime.now();
+        const nuevaPagina = window.open();
+        nuevaPagina.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Confirmación de Pedido</title></head><body>');
+        nuevaPagina.document.write('<h1>Resumen de Pedido</h1>');
+        nuevaPagina.document.write(`<p>Fecha y hora: ${dt.toLocaleString(DateTime.DATETIME_SHORT)} hs.</p>`);
+        nuevaPagina.document.write('<ul>');
 
-  keys.forEach(key => {
-    localStorage.removeItem(key);
-  });
+        let precioFinal = 0;
+        resumenPedidos.forEach((pedido, index) => {
+          nuevaPagina.document.write(`<li>${index + 1}. ${pedido.producto}: ${pedido.cantidad} (${pedido.umc} por UMC) - Total: $${pedido.totalPrecio.toFixed(2)}</li>`);
+          precioFinal += pedido.totalPrecio;
+        });
 
-  mostrarResumenPedidos();
-}
+        nuevaPagina.document.write(`</ul><p>Total Final: $${precioFinal.toFixed(2)}</p>`);
+        nuevaPagina.document.write('</body></html>');
+        nuevaPagina.document.close();
+      }
+    });
+  }
+});
 
+let sweetAlertButtonVaciar = document.querySelector('#vaciarCarrito');
+sweetAlertButtonVaciar.addEventListener('click', () => {
+  if (resumenPedidos.length === 0) {
+    Swal.fire({
+      title: "No hay productos seleccionados",
+      text: "Para vaciar el carrito deben haber productos seleccionados.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+  } else {
+    Swal.fire({
+      title: "¿Desea vaciar el carrito?",
+      icon: "warning",
+      iconColor: "red",
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Vaciar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        resumenPedidos = [];
+        localStorage.removeItem('carrito');
+        mostrarResumenPedidos();
+      }
+    });
+  }
+});
+
+cargarCarrito();
 mostrarCategorias();
 mostrarProductos(nominaProductos);
-cargarCarrito();
-
-document.getElementById('vaciarCarrito').addEventListener('click',vaciarCarrito)
