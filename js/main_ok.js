@@ -1,6 +1,6 @@
-fetch("../data.json")
+fetch("./data.json")
     .then((resp) => resp.json())
-    .then((data) =>  {
+    .then((data) => {
         nominaProductos = data;
         mostrarCategorias();
         mostrarProductos(nominaProductos);
@@ -10,6 +10,7 @@ fetch("../data.json")
 let nominaProductos = [];
 let resumenPedidos = [];
 
+// Función para mostrar categorías
 function mostrarCategorias() {
     const selectCategoria = document.getElementById('categoriaSelect');
     const categorias = [...new Set(nominaProductos.map(producto => producto.categoria))];
@@ -29,6 +30,7 @@ function mostrarCategorias() {
     selectCategoria.addEventListener('change', mostrarProductosFiltrados);
 }
 
+// Filtrado de productos por categoría seleccionada
 function mostrarProductosFiltrados() {
     const categoriaSeleccionada = document.getElementById('categoriaSelect').value;
     const productosFiltrados = categoriaSeleccionada
@@ -37,6 +39,7 @@ function mostrarProductosFiltrados() {
     mostrarProductos(productosFiltrados);
 }
 
+// Mostrar productos en el DOM
 function mostrarProductos(productos) {
     const contenedor = document.getElementById('nominadeproductos');
     contenedor.innerHTML = '';
@@ -70,6 +73,7 @@ function mostrarProductos(productos) {
     contenedor.append(lista);
 }
 
+// Modificación de productos en el carrito
 function modificarProducto(productoSeleccionado, cantidad) {
     const pedidoExistente = resumenPedidos.find(pedido => pedido.producto === productoSeleccionado.descripcion);
 
@@ -94,12 +98,14 @@ function modificarProducto(productoSeleccionado, cantidad) {
     mostrarResumenPedidos();
 }
 
+// Cargar carrito desde localStorage
 function cargarCarrito() {
     const carritoGuardado = localStorage.getItem('carrito');
     resumenPedidos = carritoGuardado ? JSON.parse(carritoGuardado) : [];
     mostrarResumenPedidos();
 }
 
+// Mostrar resumen del carrito
 function mostrarResumenPedidos() {
     const resumenContenedor = document.getElementById('resumenPedidos');
     resumenContenedor.innerHTML = '';
@@ -124,45 +130,38 @@ document.getElementById('confirmarPedido').addEventListener('click', () => {
             title: "No hay productos seleccionados",
             text: "Agregue productos al carrito antes de confirmar el pedido.",
             icon: "warning",
-            confirmButtonText: "OK",
+            showConfirmButton: false,
+            timer: 2000
         });
     } else {
         Swal.fire({
             title: "¿Confirmar compra?",
             icon: "warning",
-            showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
+                // Copiar carrito a pedidoConfirmado y abrir nueva página
+                const fechaActual = luxon.DateTime.now().toLocaleString(luxon.DateTime.DATETIME_SHORT);
+                const pedidoConfirmado = {
+                    fecha: fechaActual,
+                    resumenPedidos: resumenPedidos
+                };
+                localStorage.setItem('pedidoConfirmado', JSON.stringify(pedidoConfirmado));
+
                 Swal.fire({
                     title: "¡Pedido confirmado!",
                     text: "Redirigiendo al resumen de la compra...",
                     icon: "success",
-                    timer: 5000, // Temporizador de 4 segundos
+                    timer: 5000, // Temporizador de 5 segundos
                     showConfirmButton: false
-                });
-
-                setTimeout(() => {
-                    const dt = luxon.DateTime.now();
-                    const nuevaPagina = window.open();
-                    nuevaPagina.document.write('<h1>Resumen de Pedido</h1>');
-                    nuevaPagina.document.write(`<p>Fecha y hora: ${dt.toLocaleString(luxon.DateTime.DATETIME_SHORT)} hs.</p>`);
-                    let precioFinal = 0;
-                    resumenPedidos.forEach((pedido, index) => {
-                        nuevaPagina.document.write(`<p>${index + 1}. ${pedido.producto}: ${pedido.cantidad} - Total: $${pedido.totalPrecio.toFixed(2)}</p>`);
-                        precioFinal += pedido.totalPrecio;
-                    });
-                    nuevaPagina.document.write(`<p>Total Final: $${precioFinal.toFixed(2)}</p>`);
-                    nuevaPagina.document.close();
-
-                    // Vaciar el carrito después de la compra
+                }).then(() => {
+                    window.open('./pages/pedidoconfirmado.html', '_blank');
+                    localStorage.removeItem('carrito'); // Limpiar el carrito después de confirmar
                     resumenPedidos = [];
-                    localStorage.removeItem('carrito');
                     mostrarResumenPedidos();
-
-                }, 4000); // Espera 4 segundos antes de abrir la nueva página
+                });
             }
         });
     }
@@ -172,15 +171,17 @@ document.getElementById('confirmarPedido').addEventListener('click', () => {
 document.getElementById('vaciarCarrito').addEventListener('click', () => {
     if (resumenPedidos.length === 0) {
         Swal.fire({
-            title: "No hay productos en el carrito",
-            icon: "warning",
-            confirmButtonText: "OK",
+            title: "Carrito vacío",
+            text: "No hay productos en el carrito para vaciar.",
+            icon: "info",
+            showConfirmButton: false,
+            timer: 2000
         });
     } else {
         Swal.fire({
-            title: "¿Vaciar carrito?",
+            title: "¿Estás seguro?",
+            text: "Esta acción vaciará todos los productos del carrito.",
             icon: "warning",
-            showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: "Vaciar",
             cancelButtonText: "Cancelar",
@@ -189,6 +190,13 @@ document.getElementById('vaciarCarrito').addEventListener('click', () => {
                 resumenPedidos = [];
                 localStorage.removeItem('carrito');
                 mostrarResumenPedidos();
+                Swal.fire({
+                    title: "Carrito vaciado",
+                    text: "Todos los productos han sido eliminados del carrito.",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             }
         });
     }
