@@ -1,3 +1,9 @@
+/* Añadir espacio debajo del navbar */
+body {
+  padding-top: 70px; /* Ajusta este valor según la altura del navbar */
+}
+
+/* Estilos existentes */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 
@@ -21,18 +27,34 @@ p {
 }
 
 .filtrocategoria {
+  display: flex;
   margin: 10px;
+}
+
+.cajaform {
+  margin-left: 10px;
+}
+
+.barradebusqueda {
+  display: flex;
+  justify-content: space-between;
+}
+
+.barradebusqueda form {
+  margin-right: 20px; /* Ajuste del margen derecho de la barra de búsqueda */
 }
 
 #nominadeproductos {
   display: flex;
   flex-direction: column;
-  margin: 10px 0;
+  margin: 10px;
   width: 100%;
   height: 400px;
   overflow-y: auto;
   padding-right: 10px;
 }
+
+/* ... (otros estilos existentes) ... */
 
 ul {
   margin: 5px;
@@ -68,11 +90,11 @@ button:hover {
 }
 
 button.agregar {
-  background-color: #4CAF50; /* Verde para agregar */
+  background-color: #4CAF50;
 }
 
 button.quitar {
-  background-color: #F44336; /* Rojo para quitar */
+  background-color: #F44336;
 }
 
 .contenedor-principal {
@@ -82,18 +104,45 @@ button.quitar {
   gap: 20px;
 }
 
-.seccionlistas, .seccioncarrito {
-  flex: 1;
+.seccionlistas {
+  width: 75%;
   border: solid 3px;
   border-radius: 5px;
   padding: 10px;
-  height: 450px;
+  height: 490px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.contenedor-lateral {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  gap: 20px;
+}
+
+.seccionimagen {
+  width: 100%;
+  border: solid 3px;
+  border-radius: 5px;
+  padding: 10px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
 .seccioncarrito {
+  width: 100%;
+  border: solid 3px;
+  border-radius: 5px;
+  padding: 10px;
+  height: 270px;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
 }
 
@@ -106,12 +155,36 @@ button.quitar {
 button#vaciarCarrito, button#confirmarPedido {
   margin-top: 10px;
   padding: 8px;
-  background-color: #2196F3; /* Azul para los botones */
+  background-color: #2196F3;
   color: white;
   border-radius: 5px;
   cursor: pointer;
 }
 
-button#vaciarCarrito:hover, button#confirmarPedido:hover {
+button#fueraDeLista {
+  background-color: #2196F3;
+  color: white;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px;
+  width: 500px;
+}
+
+button#vaciarCarrito:hover, button#confirmarPedido:hover, button#fueraDeLista:hover {
   background-color: #1976D2;
 }
+
+li.selected {
+  background-color: #f0f0f0;
+}
+
+#imagenseleccionada img {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  padding: 20px;
+}
+

@@ -9,6 +9,7 @@ fetch("./data.json")
 
 let nominaProductos = [];
 let resumenPedidos = [];
+let selectedItem = null; // Variable para rastrear el elemento seleccionado
 
 // Función para mostrar categorías
 function mostrarCategorias() {
@@ -67,10 +68,34 @@ function mostrarProductos(productos) {
         contenedorBotones.append(btnQuitar);
 
         item.append(contenedorBotones);
+
+        // Añadimos evento para resaltar el ítem cuando es seleccionado
+        item.addEventListener('click', () => {
+            if (selectedItem) {
+                selectedItem.classList.remove('selected'); // Remover clase 'selected' del anterior elemento
+            }
+            selectedItem = item; // Actualizar el ítem seleccionado
+            item.classList.add('selected'); // Agregar clase 'selected' al ítem clickeado
+
+            // Mostrar la imagen del producto seleccionado
+            mostrarImagenSeleccionada(producto.imagen);
+        });
+
         lista.append(item);
     });
 
     contenedor.append(lista);
+}
+
+// Función para mostrar la imagen seleccionada en el div 'imagenseleccionada'
+function mostrarImagenSeleccionada(imagenSrc) {
+    const contenedorImagen = document.getElementById('imagenseleccionada');
+    contenedorImagen.innerHTML = ''; // Limpiar cualquier imagen previa
+    const imagen = document.createElement('img');
+    imagen.src = imagenSrc;
+    imagen.alt = "Imagen del producto seleccionado";
+    imagen.style.width = '100%'; // Ajustar el ancho de la imagen al contenedor
+    contenedorImagen.append(imagen);
 }
 
 // Modificación de productos en el carrito
@@ -142,7 +167,6 @@ document.getElementById('confirmarPedido').addEventListener('click', () => {
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
-                // Copiar carrito a pedidoConfirmado y abrir nueva página
                 const fechaActual = luxon.DateTime.now().toLocaleString(luxon.DateTime.DATETIME_SHORT);
                 const pedidoConfirmado = {
                     fecha: fechaActual,
@@ -154,11 +178,11 @@ document.getElementById('confirmarPedido').addEventListener('click', () => {
                     title: "¡Pedido confirmado!",
                     text: "Redirigiendo al resumen de la compra...",
                     icon: "success",
-                    timer: 5000, // Temporizador de 5 segundos
+                    timer: 4000,
                     showConfirmButton: false
                 }).then(() => {
                     window.open('./pages/pedidoconfirmado.html', '_blank');
-                    localStorage.removeItem('carrito'); // Limpiar el carrito después de confirmar
+                    localStorage.removeItem('carrito');
                     resumenPedidos = [];
                     mostrarResumenPedidos();
                 });
@@ -171,35 +195,35 @@ document.getElementById('confirmarPedido').addEventListener('click', () => {
 document.getElementById('vaciarCarrito').addEventListener('click', () => {
     if (resumenPedidos.length === 0) {
         Swal.fire({
-            title: "Carrito vacío",
-            text: "No hay productos en el carrito para vaciar.",
-            icon: "info",
+            title: "No hay productos seleccionados",
+            text: "Deben haber productos seleccionados para vaciar el carrito.",
+            icon: "warning",
             showConfirmButton: false,
             timer: 2000
+        
         });
-    } else {
-        Swal.fire({
-            title: "¿Estás seguro?",
-            text: "Esta acción vaciará todos los productos del carrito.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Vaciar",
-            cancelButtonText: "Cancelar",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                resumenPedidos = [];
-                localStorage.removeItem('carrito');
-                mostrarResumenPedidos();
-                Swal.fire({
-                    title: "Carrito vaciado",
-                    text: "Todos los productos han sido eliminados del carrito.",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            }
-        });
-    }
+    } else
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Se eliminarán todos los productos del carrito.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, vaciar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            resumenPedidos = [];
+            localStorage.removeItem('carrito');
+            mostrarResumenPedidos();
+            Swal.fire({
+                title: "Carrito vaciado",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
 });
 
+// Cargar carrito al iniciar
 cargarCarrito();
